@@ -6,6 +6,6 @@ Libraries that need to be installed for code to work:
 
 -pip install opencv-python (webcam)
 
--pip install dbr (barcode decoder)
+-pip install dbr (barcode scanner)
 
--pip install python-barcode
+-pip install python-barcode (barcode decoder)
