@@ -41,8 +41,14 @@ def barcode_look(input):
     name = data["products"][0]["title"]
     print ("Title: ", name, "\n")
 
-    print ("Entire Response:")
-    pprint.pprint(data)
+    brand = data["products"][0]["brand"]
+    print("Brand: " + brand)
+
+    manufacturer = data["products"][0]["manufacturer"]
+    print("Manufacturer: " + manufacturer)
+
+    #print ("Entire Response:")
+    #pprint.pprint(data)
 
 
 vc = cv.VideoCapture(0)
