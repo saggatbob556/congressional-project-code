@@ -1,5 +1,5 @@
 # barcode lookup license: "6hmoe9di29m98zs9uhm8r897tnfrcm"
-# barcode license: "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAzMjkwOTIzLVRYbFFjbTlxIiwibWFpblNlcnZlclVSTCI6Imh0dHBzOi8vbWRscy5keW5hbXNvZnRvbmxpbmUuY29tIiwib3JnYW5pemF0aW9uSUQiOiIxMDMyOTA5MjMiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20iLCJjaGVja0NvZGUiOjE4NDc0MTg1Mjl9"
+# barcode license: "t0068lQAAAB1KwEW4syDLgyEan/ox1jzsKdrqymM+A97BgI1GKI1Qop/zgCpJH0778dkamsYYAGLZYZyCKQt9GokvNgnn1n0=;t0068lQAAAEwXD9bJmA7y1PU8CB3TUosceg1MJpVefKQTCIAMAHPBcMsI37bSEADLdaFe9zfyFNoGfo+o1jLUbWbnC3LJDn4="
 from __future__ import print_function
 import numpy as np
 import cv2 as cv 
@@ -12,7 +12,7 @@ import json
 import pprint
 
 
-BarcodeReader.init_license("DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAzMjkwOTIzLVRYbFFjbTlxIiwibWFpblNlcnZlclVSTCI6Imh0dHBzOi8vbWRscy5keW5hbXNvZnRvbmxpbmUuY29tIiwib3JnYW5pemF0aW9uSUQiOiIxMDMyOTA5MjMiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20iLCJjaGVja0NvZGUiOjE4NDc0MTg1Mjl9")
+BarcodeReader.init_license("t0068lQAAAB1KwEW4syDLgyEan/ox1jzsKdrqymM+A97BgI1GKI1Qop/zgCpJH0778dkamsYYAGLZYZyCKQt9GokvNgnn1n0=;t0068lQAAAEwXD9bJmA7y1PU8CB3TUosceg1MJpVefKQTCIAMAHPBcMsI37bSEADLdaFe9zfyFNoGfo+o1jLUbWbnC3LJDn4=")
 reader = BarcodeReader()
 
 threadn = 1 # cv.getNumberOfCPUs()
@@ -75,4 +75,3 @@ while True:
      if ch == 27:
          break
      
-
