@@ -1,4 +1,4 @@
-# barcode lookup license: "9anv0b5gk9pon5ihsbgbxafo29mi7f"
+# barcode lookup license: "6hmoe9di29m98zs9uhm8r897tnfrcm"
 # barcode license: "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAzMjkwOTIzLVRYbFFjbTlxIiwibWFpblNlcnZlclVSTCI6Imh0dHBzOi8vbWRscy5keW5hbXNvZnRvbmxpbmUuY29tIiwib3JnYW5pemF0aW9uSUQiOiIxMDMyOTA5MjMiLCJzdGFuZGJ5U2VydmVyVVJMIjoiaHR0cHM6Ly9zZGxzLmR5bmFtc29mdG9ubGluZS5jb20iLCJjaGVja0NvZGUiOjE4NDc0MTg1Mjl9"
 from __future__ import print_function
 import numpy as np
@@ -29,7 +29,7 @@ def process_frame(frame):
      return results
 
 def barcode_look(input):
-    api_key = "9anv0b5gk9pon5ihsbgbxafo29mi7f"
+    api_key = "6hmoe9di29m98zs9uhm8r897tnfrcm"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
