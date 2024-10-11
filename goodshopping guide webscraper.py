@@ -24,17 +24,22 @@ barcodeTasks = deque()
 
 def get_rating(brand):
     # Define the URL of the website to scrape
-    url = 'https://thegoodshoppingguide.com/brand-directory/' + brand + '/'
+    url = "https://ethical.org.au/search?q=" + brand
 
     # Send an HTTP request to the website and retrieve the HTML content
     response = requests.get(url)
 
-    # Puts all html into soup
+        # Puts all html into soup
     soup = BeautifulSoup(response.content, 'html.parser')
-
-    for company in soup.find_all("div", {"class": "pt-8 xl:pt-12 2xl:pt-16pb-14 xl:pb-16 2xl:pb-20 px-8 bg-white"}):
-        temp = company.find("div", {"class": "rounded-full h-12 w-12 bg-orange flex items-center justify-center text-white text-2xl text-bold"})
-        print("Ethical Rating: " + temp.get_text())
+    soup = str(soup.main())
+    other_soup = BeautifulSoup(soup, 'html.parser')
+    for company in other_soup.find_all("div", {"class", "mb-10"}):
+        for link in company.find_all("a"):
+            if (link.get_text()).lower() == brand.lower():
+                url = link.get("href")
+                response = requests.get(url)
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
 
 
 def process_frame(frame):
@@ -48,7 +53,7 @@ def process_frame(frame):
 
 def barcode_look(input):
     api_key = "6hmoe9di29m98zs9uhm8r897tnfrcm"
-    url = "https://api.barcodelookup.com/v3/products?barcode=" + "024100104437" + "&formatted=y&key=" + api_key
+    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
