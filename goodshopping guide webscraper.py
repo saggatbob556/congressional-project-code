@@ -22,7 +22,10 @@ threadn = 1 # cv.getNumberOfCPUs()
 pool = ThreadPool(processes = threadn)
 barcodeTasks = deque()
 
-def get_rating(brand):
+
+def get_url(brand):
+    if brand.lower() == "ge":
+        brand = "General Electric"
     # Define the URL of the website to scrape
     url = "https://ethical.org.au/search?q=" + brand
 
@@ -36,10 +39,35 @@ def get_rating(brand):
     for company in other_soup.find_all("div", {"class", "mb-10"}):
         for link in company.find_all("a"):
             if (link.get_text()).lower() == brand.lower():
-                url = link.get("href")
-                response = requests.get(url)
-                soup = BeautifulSoup(response.content, 'html.parser')
-                
+                return link.get("href")
+
+
+def get_rating(link):
+    if link == "None":
+        return "None"
+    
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    soup_img = str(soup.find("div", {"class": "flex flex-col sm:flex-row items-center"}))
+    soup_img = BeautifulSoup(soup_img, 'html.parser')
+    soup_img = soup_img.find("img")
+    soup_img = soup_img.get("alt")
+    print("\nRating: " + soup_img)
+
+    soup_praise = str(soup.find("div", {"class": "bg-assess-praise border border-assess-praise-dark px-2 md:block md:order-none order-2"}))
+    soup_praise = BeautifulSoup(soup_praise, 'html.parser')
+    print("\nPraise:")
+    for praise in soup_praise.find_all("span", {"class": "leading-tight"}):
+        print("-" + praise.get_text())
+
+    soup_crit = str(soup.find("div", {"class": "bg-assess-criticism border border-assess-criticism-dark px-2 md:block md:order-none order-1"}))
+    soup_crit = BeautifulSoup(soup_crit, 'html.parser')
+    print("\nCriticisms:")
+    for crit in soup_crit.find_all("span", {"class": "leading-tight"}):
+        print("-" + crit.get_text())
+
+    return "Done"
 
 
 def process_frame(frame):
@@ -50,6 +78,7 @@ def process_frame(frame):
          print(bre)
         
      return results
+
 
 def barcode_look(input):
     api_key = "6hmoe9di29m98zs9uhm8r897tnfrcm"
@@ -70,8 +99,10 @@ def barcode_look(input):
     manufacturer = data["products"][0]["manufacturer"]
     print("Manufacturer: " + manufacturer)
 
-    print(get_rating(brand))
-    print(get_rating(manufacturer))
+    link = get_url(brand)
+    link = get_url(manufacturer)
+    print(link)
+    print(get_rating(link))
 
     #print ("Entire Response:")
     #pprint.pprint(data)
