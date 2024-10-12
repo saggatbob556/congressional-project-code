@@ -1,4 +1,4 @@
-# barcode lookup license: "6hmoe9di29m98zs9uhm8r897tnfrcm"
+# barcode lookup license: "2zexfvl7jilokzgon5b3mwuldkfpjk"
 # barcode license: "t0068lQAAAB1KwEW4syDLgyEan/ox1jzsKdrqymM+A97BgI1GKI1Qop/zgCpJH0778dkamsYYAGLZYZyCKQt9GokvNgnn1n0=;t0068lQAAAEwXD9bJmA7y1PU8CB3TUosceg1MJpVefKQTCIAMAHPBcMsI37bSEADLdaFe9zfyFNoGfo+o1jLUbWbnC3LJDn4="
 #search URL: "https://ethical.org.au/search?q=doritos"
 from __future__ import print_function
@@ -43,9 +43,6 @@ def get_url(brand):
 
 
 def get_rating(link):
-    if link == "None":
-        return "None"
-    
     response = requests.get(link)
     soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -81,7 +78,7 @@ def process_frame(frame):
 
 
 def barcode_look(input):
-    api_key = "6hmoe9di29m98zs9uhm8r897tnfrcm"
+    api_key = "2zexfvl7jilokzgon5b3mwuldkfpjk"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
@@ -102,7 +99,8 @@ def barcode_look(input):
     link = get_url(brand)
     link = get_url(manufacturer)
     print(link)
-    print(get_rating(link))
+    if not link == None:
+        print(get_rating(link))
 
     #print ("Entire Response:")
     #pprint.pprint(data)
