@@ -9,3 +9,5 @@ Libraries that need to be installed for code to work:
 -pip install dbr (barcode scanner)
 
 -pip install python-barcode (barcode decoder)
+
+-pip install mysql-connector-python (database)
