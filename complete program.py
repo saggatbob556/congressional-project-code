@@ -4,6 +4,7 @@
 from __future__ import print_function
 from bs4 import BeautifulSoup
 import requests
+from requests import ConnectionError
 import numpy as np
 import cv2 as cv 
 from multiprocessing.pool import ThreadPool
@@ -26,12 +27,19 @@ barcodeTasks = deque()
 def get_url(brand):
     if brand.lower() == "ge":
         brand = "General Electric"
+    if brand.lower() == "pilot corporation":
+        brand = "Pilot"
+    if brand == "EXPO":
+        brand = "newell brands"
     # Define the URL of the website to scrape
     url = "https://ethical.org.au/search?q=" + brand
 
     # Send an HTTP request to the website and retrieve the HTML content
+    try:
+        requests.get(url)
+    except ConnectionError as e:
+        return e
     response = requests.get(url)
-
         # Puts all html into soup
     soup = BeautifulSoup(response.content, 'html.parser')
     soup = str(soup.main())
