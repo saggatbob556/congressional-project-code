@@ -10,6 +10,6 @@ Libraries that need to be installed for code to work:
 
 -pip install python-barcode (barcode decoder)
 
--pip install mysql-connector-python (database)
+-pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib (database)
 
 -pip install pysimplegui (gui)
