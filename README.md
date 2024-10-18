@@ -11,3 +11,5 @@ Libraries that need to be installed for code to work:
 -pip install python-barcode (barcode decoder)
 
 -pip install mysql-connector-python (database)
+
+-pip install pysimplegui (gui)
