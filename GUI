@@ -1,0 +1,295 @@
+import PySimpleGUI as sg   
+
+sg.theme('Dark Amber')
+
+# contains the String of the searched product
+searchedItem = ''
+
+# variables that are currently not used:
+# these will contain whatever the database / barcode scanner returns (add more as needed)
+# eventually add them to the window titled windowProduct
+foundItem = ''
+score = 0
+reasoning = ''
+
+
+
+
+""" controls which window is shown 
+0 = home
+1 = scan barcode
+2 = database search
+3 = product confirm
+4 = product info
+5 = try again
+6 = submit a product for review
+7 = thank you for submitting a product
+"""
+windowActive = 0
+
+
+# home screen layout: maybe put some images in the 2nd row for icons
+layoutHome = [[sg.Text("Is your product sustainable?"),sg.Button("Exit")],
+          [sg.Button("Scan barcode"), sg.Button("Search our database")]]
+
+# barcode scan layout
+layoutScan = [[sg.Text("Please hold your barcode up to the camera"),sg.Button("Home")],
+          [sg.Button("Search our database")]]
+
+# database search layout
+layoutSearch = [[sg.Text("Type your product here: "),sg.Input(key = '-INPUT-'),sg.Button("Search"),sg.Button("Home")],
+          [sg.Button("Scan barcode")]]
+
+# is-this-your-product layout
+layoutConfirm = [[sg.Text("Is this your product? "), sg.Text(key = '-OUTPUT-'),sg.Button("Home")],
+          [sg.Button("Yes"),sg.Button("No")]]
+
+# product information layout
+# ADD MORE INFO AS NEEDED
+layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')], [sg.Button("Home")],
+          [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
+          [sg.Text("Reasoning: "), sg.Text(key='-OUTPUT3-')]]
+
+# layout for if the scan and database aren't working
+layoutTryAgain = [[sg.Text("Could't find your product."),sg.Button("Scan"), sg.Button("Search database"),sg.Button("Home")],
+          [sg.Button("Submit a product for review")]]
+
+# submit product for review layout (does nothing)
+layoutReview = [[sg.Text("Name of product"),sg.Input(key = '-INPUT1-'),sg.Button("Home")],
+          [sg.Text("Name of company"),sg.Input(key = '-INPUT2-')],[sg.Button("Enter")]]
+
+# your request has been recorded layout (does nothing)
+layoutRecorded = [[sg.Text("Your response has been recorded. Thank you for making our app better.")],[sg.Button("Home")]]
+
+
+
+
+# creates the windows for home, barcode scan, search database, etc.
+windowHome = sg.Window('Sustainable product app', layoutHome, finalize=True)
+windowScan = sg.Window('Scanning object', layoutScan, finalize=True)
+windowSearch = sg.Window('Search database', layoutSearch,finalize=True)
+
+windowConfirm = sg.Window('Confirm your product', layoutConfirm,finalize=True)
+windowProduct = sg.Window('Product info', layoutProduct, finalize=True)
+
+windowTry = sg.Window('Oops', layoutTryAgain, finalize=True)
+windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
+windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True)
+
+
+def hideWindows():
+  windowHome.hide()
+  windowScan.hide()
+  windowSearch.hide()
+  windowConfirm.hide()
+  windowProduct.hide()
+  windowTry.hide()
+  windowSubmit.hide()
+  windowThanks.hide()
+
+
+def closeAll():
+  windowHome.close()
+  windowScan.close()
+  windowSearch.close()
+  windowConfirm.close()
+  windowProduct.close()
+  windowTry.close()
+  windowSubmit.close()
+  windowThanks.close()
+
+
+
+stay = True
+
+while stay:
+
+  # user is currently on home window
+  while windowActive == 0:
+    hideWindows()
+    windowHome.un_hide()
+    event0, values0 = windowHome.read()
+
+    # close the entire app
+    if event0 == sg.WIN_CLOSED or event0 == 'Exit':
+      stay = False
+      break
+
+    # open barcode window
+    if event0 == "Scan barcode":
+      windowActive = 1
+      break
+
+    # open database window
+    if event0 == "Search our database":
+      windowActive = 2
+      break
+
+  
+
+  # barcode scanner UI
+  while windowActive == 1:
+    hideWindows()
+    windowScan.un_hide()
+    event1, values1 = windowScan.read()
+
+    # if the window is closed, close the entire application
+    if event1 == sg.WIN_CLOSED:
+      stay = False
+      break 
+
+    # exit to home window 
+    if event1 == 'Home':
+      windowActive = 0
+      break
+
+    # close current window and open database search window
+    if event1 == "Search our database":
+      windowActive = 2
+      break
+
+    # if product is found:
+    #   windowActive = 3
+    #   the variables at the top get assigned to the info gathered from the barcode scanner and webscraper
+    # break
+    
+      
+  
+  # database search UI
+  while windowActive == 2:
+    hideWindows()
+    windowSearch.un_hide()
+    event2, values2 = windowSearch.read()
+
+    if event2 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    # exit to home window
+    if event2 == 'Home':
+      windowActive = 0
+      break
+      
+    # close current window and open barcode window
+    if event2 == "Scan barcode":
+      windowActive = 1
+      break
+
+    # if the user types something into the box and presses 'search'
+    if event2 == "Search":
+      searchedItem = values2['-INPUT-']
+      
+      # in app, search through the database and return the product (should go into foundItem)
+      # also update the variables at the top (add more as needed)
+
+      # PLACEHOLDER CODE FOR TESTING
+      windowActive = 3
+      windowConfirm["-OUTPUT-"].update(foundItem)
+      break
+  
+
+  # confirm product window
+  while windowActive == 3:
+    hideWindows()
+    windowConfirm.un_hide()
+    event3, values3 = windowConfirm.read()
+
+    if event3 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    if event3 == "Home":
+      windowActive = 0
+      break
+
+    if event3 == "Yes":
+      windowActive = 4
+      windowProduct["-OUTPUT1-"].update(foundItem)
+      windowProduct["-OUTPUT2-"].update(score)
+      windowProduct["-OUTPUT3-"].update(reasoning)
+      break
+
+    if event3 == "No":
+      windowActive = 5
+      break
+
+  
+  # displays product information
+  while windowActive == 4:
+    hideWindows()
+    windowProduct.un_hide()
+    event4, values4 = windowProduct.read()
+
+    if event4 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    if event4 == "Home": 
+      windowActive = 0
+      break
+
+
+  # window if product isn't found
+  while windowActive == 5:
+    hideWindows()
+    windowTry.un_hide()
+    event5, values5 = windowTry.read()
+
+    if event5 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    if event5 == "Home":
+      windowActive = 0
+      break
+
+    if event5 == "Scan":
+      windowActive = 1
+      break
+
+    if event5 == "Search database":
+      windowActive = 2
+      break
+
+    if event5 == "Submit a product for review":
+      windowActive = 6
+      break
+
+  
+  # submit a product for review
+  while windowActive == 6:
+    hideWindows()
+    windowSubmit.un_hide()
+    event6, values6 = windowSubmit.read()
+
+    if event6 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    if event6 == "Home":
+      windowActive = 0
+      break
+
+    # can do something if you want it to
+    if event6 == "Enter":
+      windowActive = 7
+      break
+
+
+
+  # thanks the user
+  while windowActive == 7:
+    hideWindows()
+    windowThanks.un_hide()
+    event7, values7 = windowThanks.read()
+
+    if event7 == sg.WIN_CLOSED:
+      stay = False
+      break
+
+    if event7 == "Home":
+      windowActive = 0
+      break
+
+
+closeAll()
