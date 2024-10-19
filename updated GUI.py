@@ -1,5 +1,5 @@
 import PySimpleGUI as sg   
-
+from dataParser import *
 sg.theme('Dark Amber')
 
 # contains the String of the searched product
@@ -9,7 +9,7 @@ searchedItem = ''
 # these will contain whatever the database / barcode scanner returns (add more as needed)
 # eventually add them to the window titled windowProduct
 foundItem = ''
-score = 0
+score = ''
 reasoning = ''
 
 
@@ -200,6 +200,9 @@ while stay:
       # also update the variables at the top (add more as needed)
 
       # PLACEHOLDER CODE FOR TESTING
+      foundItem = getData(searchedItem)
+      score = getRatingOfSpecific(searchedItem)
+      reasoning = str(getPraiseOf(searchedItem)) + " " + str(getCriticismOf(searchedItem))
       windowActive = 3
       windowConfirm["-OUTPUT-"].update(foundItem)
       break
