@@ -184,7 +184,6 @@ def get_rating(link):
     rating = soup_img
     return rating
 
-
 def get_reason(link):
     response = requests.get(link)
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -222,17 +221,6 @@ def barcode_title(input):
     name = data["products"][0]["title"]
     return name
 
-def barcode_category(input):
-    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
-    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
-
-    with urllib.request.urlopen(url) as url:
-        data = json.loads(url.read().decode())
-        
-    cat = data["category"][0]["title"]
-    return cat
-
-
 def barcode_brand(input):
     api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
@@ -245,6 +233,7 @@ def barcode_brand(input):
 
     link = get_url(brand)
     link = get_url(manufacturer)
+    return brand
     if not link == None:
         return link
     return "None"
@@ -332,23 +321,26 @@ while stay:
       break
     
     if event1 == "Scan Product":
+      print("good")
       num = scan()
       foundItem = barcode_title(num)
-      if str(check_database(foundItem)) == "None":
+      foundBrand = barcode_brand(num)
+      print(str(check_database(foundBrand)))
+      if str(check_database(foundBrand)) == "None":
         link = barcode_brand(num)
         if not link == "None":
             score = get_rating(link)
             reasoning = get_reason(link)
-            category = barcode_category(num)
         else:
             windowActive = 5
             windowConfirm["-OUTPUT-"].update('Item Not Found')
 
       else:
-            score = getRatingOfSpecific(foundItem)
-            reasoning = str(getPraiseOf(foundItem)) + " " + str(getCriticismOf(foundItem))
+            print("e")
+            score = getRatingOfSpecific(foundBrand)
+            reasoning = "Praise: \n" + str(getPraiseOf(foundBrand)) + "\n\nCriticism: \n" + str(getCriticismOf(foundBrand))
       windowActive = 3
-      windowConfirm["-OUTPUT-"].update(foundItem)
+      windowConfirm["-OUTPUT-"].update(barcode_title(num))
       break
     
       
