@@ -222,6 +222,16 @@ def barcode_title(input):
     name = data["products"][0]["title"]
     return name
 
+def barcode_category(input):
+    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
+    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
+
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+        
+    cat = data["category"][0]["title"]
+    return cat
+
 
 def barcode_brand(input):
     api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
