@@ -1,5 +1,15 @@
+from __future__ import print_function
 import PySimpleGUI as sg   
 from dataParser import *
+from bs4 import BeautifulSoup
+import requests
+from requests import ConnectionError
+import cv2 as cv 
+from multiprocessing.pool import ThreadPool
+from collections import deque  
+from dbr import *
+import urllib.request
+import json
 sg.theme('Dark Amber')
 
 # contains the String of the searched product
@@ -41,7 +51,7 @@ layoutHome = [[sg.Text("Is your product sustainable?", p = (100, 10), font = (15
 
 # barcode scan layout
 layoutScan = [[sg.Text("Please hold your barcode up to the camera")],
-              [sg.Button("Home", border_width=5), sg.Button("Search our database", border_width=5)]]
+              [sg.Button("Home", border_width=5), sg.Button("Search our database", border_width=5), sg.Button("Scan Product", border_width=5)]]
 
 # database search layout
 layoutSearch = [[sg.Text("Type your product here: "),sg.Input(key = '-INPUT-'),sg.Button("Search", border_width=5)],
@@ -62,7 +72,7 @@ layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column
 layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')],
           [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
           [sg.Text("Reasoning: ")], 
-          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (300,15), wrap_lines=True)],
+          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (100,5), wrap_lines=True)],
           [sg.VPush()],
           [sg.Button("Home", border_width=5)]]
 
@@ -88,17 +98,22 @@ layoutReview = [[sg.Text("All fields are required")],
 layoutRecorded = [[sg.Text("Your response has been recorded. Thank you for making our app better.")],[sg.Button("Home")]]
 
 
+
+
+
 # creates the windows for home, barcode scan, search database, etc.
-windowHome = sg.Window('Sustainable product app', layoutHome,  size=(1000, 500), finalize=True)
+windowHome = sg.Window('Sustainable product app', layoutHome,  size=(500, 250), finalize=True)
 windowScan = sg.Window('Scanning object', layoutScan, element_justification='center', finalize=True)
 windowSearch = sg.Window('Search database', layoutSearch, finalize=True)
 
-windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(1200,600), finalize=True)
-windowProduct = sg.Window('Product info', layoutProduct, size = (1000, 500), finalize=True)
+windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(600,300), finalize=True)
+windowProduct = sg.Window('Product info', layoutProduct, size = (500, 250), finalize=True)
 
-windowTry = sg.Window('Oops', layoutTryAgain, size = (1000, 500), element_justification= 'center',finalize=True)
-windowSubmit = sg.Window('Submit a product for review', layoutReview, size = (1000, 500), finalize=True)
+windowTry = sg.Window('Oops', layoutTryAgain, size = (500, 250), element_justification= 'center',finalize=True)
+windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
 windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True)
+
+
 
 
 def hideWindows():
@@ -112,6 +127,7 @@ def hideWindows():
   windowThanks.hide()
 
 
+
 def closeAll():
   windowHome.close()
   windowScan.close()
@@ -121,6 +137,142 @@ def closeAll():
   windowTry.close()
   windowSubmit.close()
   windowThanks.close()
+
+
+BarcodeReader.init_license("t0068lQAAAB1KwEW4syDLgyEan/ox1jzsKdrqymM+A97BgI1GKI1Qop/zgCpJH0778dkamsYYAGLZYZyCKQt9GokvNgnn1n0=;t0068lQAAAEwXD9bJmA7y1PU8CB3TUosceg1MJpVefKQTCIAMAHPBcMsI37bSEADLdaFe9zfyFNoGfo+o1jLUbWbnC3LJDn4=")
+reader = BarcodeReader()
+
+threadn = 1 # cv.getNumberOfCPUs()
+pool = ThreadPool(processes = threadn)
+barcodeTasks = deque()
+
+
+def get_url(brand):
+    if brand.lower() == "ge":
+        brand = "General Electric"
+    if brand.lower() == "pilot corporation":
+        brand = "Pilot"
+    if brand == "EXPO":
+        brand = "newell brands"
+    # Define the URL of the website to scrape
+    url = "https://ethical.org.au/search?q=" + brand
+
+    # Send an HTTP request to the website and retrieve the HTML content
+    try:
+        requests.get(url)
+    except ConnectionError as e:
+        return e
+    response = requests.get(url)
+        # Puts all html into soup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = str(soup.main())
+    other_soup = BeautifulSoup(soup, 'html.parser')
+    for company in other_soup.find_all("div", {"class", "mb-10"}):
+        for link in company.find_all("a"):
+            if (link.get_text()).lower() == brand.lower():
+                return link.get("href")
+
+
+def get_rating(link):
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    soup_img = str(soup.find("div", {"class": "flex flex-col sm:flex-row items-center"}))
+    soup_img = BeautifulSoup(soup_img, 'html.parser')
+    soup_img = soup_img.find("img")
+    soup_img = soup_img.get("alt")
+    rating = soup_img
+    return rating
+
+
+def get_reason(link):
+    response = requests.get(link)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    soup_praise = str(soup.find("div", {"class": "bg-assess-praise border border-assess-praise-dark px-2 md:block md:order-none order-2"}))
+    soup_praise = BeautifulSoup(soup_praise, 'html.parser')
+    praises = ''
+    for praise in soup_praise.find_all("span", {"class": "leading-tight"}):
+        praises += (praise.get_text() + " ")
+
+    soup_crit = str(soup.find("div", {"class": "bg-assess-criticism border border-assess-criticism-dark px-2 md:block md:order-none order-1"}))
+    soup_crit = BeautifulSoup(soup_crit, 'html.parser')
+    criticisms = ''
+    for crit in soup_crit.find_all("span", {"class": "leading-tight"}):
+        criticisms += (crit.get_text() + " ")
+    
+    return praises + " " + criticisms
+
+def process_frame(frame):
+     results = None
+     try:
+         results = reader.decode_buffer(frame)
+     except BarcodeReaderError as bre:
+         print(bre)
+        
+     return results
+
+
+def barcode_title(input):
+    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
+    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
+
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+        
+    name = data["products"][0]["title"]
+    return name
+
+
+def barcode_brand(input):
+    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
+    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
+
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+    brand = data["products"][0]["brand"]
+
+    manufacturer = data["products"][0]["manufacturer"]
+
+    link = get_url(brand)
+    link = get_url(manufacturer)
+    if not link == None:
+        return link
+    return "None"
+
+
+def check_database(input):
+    try:
+        return getData(input)
+    except:
+        return "None"
+
+
+def scan():
+    vc = cv.VideoCapture(0)
+    while True:
+        ret, frame = vc.read()
+        while len(barcodeTasks) > 0 and barcodeTasks[0].ready():
+            results = barcodeTasks.popleft().get()
+            if results != None:
+                for result in results:
+                    points = result.localization_result.localization_points
+                    cv.line(frame, points[0], points[1], (0,255,0), 2)
+                    cv.line(frame, points[1], points[2], (0,255,0), 2)
+                    cv.line(frame, points[2], points[3], (0,255,0), 2)
+                    cv.line(frame, points[3], points[0], (0,255,0), 2)
+                    cv.putText(frame, result.barcode_text, points[0], cv.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255))
+                    cv.destroyAllWindows()
+                    return result.barcode_text
+
+        if len(barcodeTasks) < threadn:
+            task = pool.apply_async(process_frame, (frame.copy(), ))
+            barcodeTasks.append(task)
+
+        cv.imshow('Barcode & QR Code Scanner', frame)
+        ch = cv.waitKey(1)
+        if ch == 27:
+            cv.destroyAllWindows()
+            break
 
 stay = True
 
@@ -168,11 +320,28 @@ while stay:
     if event1 == "Search our database":
       windowActive = 2
       break
+    
+    if event1 == "Scan Product":
+      print("good")
+      num = scan()
+      foundItem = barcode_title(num)
+      print(str(check_database(foundItem)))
+      if str(check_database(foundItem)) == "None":
+        link = barcode_brand(num)
+        if not link == "None":
+            score = get_rating(link)
+            reasoning = get_reason(link)
+        else:
+            windowActive = 5
+            windowConfirm["-OUTPUT-"].update('Item Not Found')
 
-    # if product is found:
-    #   windowActive = 3
-    #   the variables at the top get assigned to the info gathered from the barcode scanner and webscraper
-    # break
+      else:
+            print("e")
+            score = getRatingOfSpecific(foundItem)
+            reasoning = str(getPraiseOf(foundItem)) + " " + str(getCriticismOf(foundItem))
+      windowActive = 3
+      windowConfirm["-OUTPUT-"].update(foundItem)
+      break
     
       
   
@@ -321,6 +490,9 @@ while stay:
     if event7 == "Home":
       windowActive = 0
       break
+
+
+
 
 
 closeAll()
