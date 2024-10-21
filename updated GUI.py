@@ -334,10 +334,8 @@ while stay:
       break
     
     if event1 == "Scan Product":
-      print("good")
       num = scan()
       foundItem = barcode_title(num)
-      print(str(check_database(foundItem)))
       if str(check_database(foundItem)) == "None":
         link = barcode_brand(num)
         if not link == "None":
@@ -349,7 +347,6 @@ while stay:
             windowConfirm["-OUTPUT-"].update('Item Not Found')
 
       else:
-            print("e")
             score = getRatingOfSpecific(foundItem)
             reasoning = str(getPraiseOf(foundItem)) + " " + str(getCriticismOf(foundItem))
       windowActive = 3
