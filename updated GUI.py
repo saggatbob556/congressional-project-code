@@ -110,20 +110,39 @@ layoutReview = [[sg.Text("All fields are required")],
 layoutRecorded = [[sg.Text("Your response has been recorded. Thank you for making our app better.")],[sg.Button("Home")]]
 
 
-
+# centers the window
+def move_center(window):
+    screen_width, screen_height = window.get_screen_dimensions()
+    win_width, win_height = window.size
+    x, y = (screen_width - win_width)//2, (screen_height - win_height)//2
+    window.move(x, y)
 
 
 # creates the windows for home, barcode scan, search database, etc.
-windowHome = sg.Window('Sustainable product app', layoutHome,  size=(1000, 500), finalize=True)
-windowScan = sg.Window('Scanning object', layoutScan, element_justification='center', finalize=True)
-windowSearch = sg.Window('Search database', layoutSearch, finalize=True)
+windowHome = sg.Window('Sustainable product app', layoutHome, finalize=True)
+windowScan = sg.Window('Scanning object', layoutScan, finalize=True, location = (5000,5000))
+windowScan.hide()
+move_center(windowScan)
+windowSearch = sg.Window('Search database', layoutSearch,finalize=True,location=(5000,5000))
+windowSearch.hide()
+move_center(windowSearch)
 
-windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(1200,600), finalize=True)
-windowProduct = sg.Window('Product info', layoutProduct, size = (1000, 500), finalize=True)
+windowConfirm = sg.Window('Confirm your product', layoutConfirm,finalize=True, location=(5000,5000))
+windowConfirm.hide()
+move_center(windowConfirm)
+windowProduct = sg.Window('Product info', layoutProduct, finalize=True,location = (5000,5000))
+windowProduct.hide()
+move_center(windowProduct)
 
-windowTry = sg.Window('Oops', layoutTryAgain, size = (1000, 500), element_justification= 'center',finalize=True)
-windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
-windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True)
+windowTry = sg.Window('Oops', layoutTryAgain, finalize=True,location = (5000,5000))
+windowTry.hide()
+move_center(windowTry)
+windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True,location = (5000,5000))
+windowSubmit.hide()
+move_center(windowSubmit)
+windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True,location = (5000,5000))
+windowThanks.hide()
+move_center(windowThanks)
 
 
 
