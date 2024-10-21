@@ -62,7 +62,7 @@ layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column
 layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')],
           [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
           [sg.Text("Reasoning: ")], 
-          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (100,5), wrap_lines=True)],
+          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (300,15), wrap_lines=True)],
           [sg.VPush()],
           [sg.Button("Home", border_width=5)]]
 
@@ -74,26 +74,30 @@ layoutTryAgain = [[sg.Text("Sorry!", font = (10))],
                   [sg.Text("We couldn't find your product.", font = (10))], 
                   [sg.Button("Scan", size = (5,1), p = (20, 10), border_width=5), 
                    sg.Button("Search database", size = (17, 1), p = (20, 10), border_width=5), 
-                   sg.Button("Home", size = (5,1), p = (20, 10), border_width=5)]]
+                   sg.Button("Home", size = (5,1), p = (20, 10), border_width=5),
+                   sg.Button("Submit a product for review", size = (25, 1), p = (20, 10), border_width=5)]]
 
 # submit product for review layout (does nothing)
-layoutReview = [[sg.Text("Name of product"),sg.Input(key = '-INPUT1-'),sg.Button("Home")],
-          [sg.Text("Name of company"),sg.Input(key = '-INPUT2-')],[sg.Button("Enter")]]
+layoutReview = [[sg.Text("All fields are required")],
+          [sg.Text("Name of product"),sg.Input(key = '-INPUT1-'),sg.Button("Home")],
+          [sg.Text("Name of company"),sg.Input(key = '-INPUT2-')],
+          [sg.Text("Category name"),sg.Input(key = '-INPUT3-')],
+          [sg.Button("Enter")]]
 
 # your request has been recorded layout (does nothing)
 layoutRecorded = [[sg.Text("Your response has been recorded. Thank you for making our app better.")],[sg.Button("Home")]]
 
 
 # creates the windows for home, barcode scan, search database, etc.
-windowHome = sg.Window('Sustainable product app', layoutHome,  size=(500, 250), finalize=True)
+windowHome = sg.Window('Sustainable product app', layoutHome,  size=(1000, 500), finalize=True)
 windowScan = sg.Window('Scanning object', layoutScan, element_justification='center', finalize=True)
 windowSearch = sg.Window('Search database', layoutSearch, finalize=True)
 
-windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(600,300), finalize=True)
-windowProduct = sg.Window('Product info', layoutProduct, size = (500, 250), finalize=True)
+windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(1200,600), finalize=True)
+windowProduct = sg.Window('Product info', layoutProduct, size = (1000, 500), finalize=True)
 
-windowTry = sg.Window('Oops', layoutTryAgain, size = (500, 250), element_justification= 'center',finalize=True)
-windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
+windowTry = sg.Window('Oops', layoutTryAgain, size = (1000, 500), element_justification= 'center',finalize=True)
+windowSubmit = sg.Window('Submit a product for review', layoutReview, size = (1000, 500), finalize=True)
 windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True)
 
 
@@ -203,7 +207,7 @@ while stay:
       try:
         foundItem = getData(searchedItem)
         score = getRatingOfSpecific(searchedItem)
-        reasoning = str(getPraiseOf(searchedItem)) + " " + str(getCriticismOf(searchedItem))
+        reasoning = "Praise: \n" + str(getPraiseOf(searchedItem)) + "\n\nCriticism: " + str(getCriticismOf(searchedItem))
         windowActive = 3
         windowConfirm["-OUTPUT-"].update(foundItem)
       except:
@@ -285,7 +289,9 @@ while stay:
     hideWindows()
     windowSubmit.un_hide()
     event6, values6 = windowSubmit.read()
-
+    userProduct = values6['-INPUT1-']
+    userCompany = values6['-INPUT2-']
+    userCategoryName = values6['-INPUT3-']
     if event6 == sg.WIN_CLOSED:
       stay = False
       break
@@ -296,6 +302,7 @@ while stay:
 
     # can do something if you want it to
     if event6 == "Enter":
+      addNewProduct(userCompany, '?', getNumOfCategoryName(userCategoryName), 'none', 'none', userCategoryName)
       windowActive = 7
       break
 
