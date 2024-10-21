@@ -49,8 +49,8 @@ def getLogo(brand):
   tempLink = 'https://img.logo.dev/' + str(brand) + '.com?token=pk_eG-E-09aSFu5XX1-z-fa_w'
   with open('logo.png', 'wb') as fh:
       fh.write(base64.decodebytes(base64.b64encode(requests.get(tempLink).content).decode("Windows-1252")))
-#logo = Image.open('/logo.png')
-#logo.save('/logo.png')
+#logo = Image.open('logo.png')
+#logo.save('logo.png')
 #need someone to fix this, it would be helpful to have an image of the company logo but i don't know how to save it
 layoutHome = [[sg.Text("Is your product sustainable?", p = (100, 10), font = (15))],
               [sg.Button("", key = "Scan barcode", image_data = cameraIcon_base64, p = 26, border_width = 5), 
@@ -429,7 +429,10 @@ while stay:
       windowProduct["-OUTPUT1-"].update(foundItem)
       windowProduct["-OUTPUT2-"].update(score)
       windowProduct["-OUTPUT3-"].update(reasoning)
-      windowProduct["-OUTPUT8-"].update(getAlternativeBrand(searchedItem))
+      try:
+        windowProduct["-OUTPUT8-"].update(getAlternativeBrand(searchedItem))
+      except:
+         windowProduct["-OUTPUT8-"].update(foundItem + " not found within category! Please add this product to our database!")
       break
 
     if event3 == "No":
