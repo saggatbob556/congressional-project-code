@@ -212,7 +212,7 @@ def process_frame(frame):
 
 
 def barcode_title(input):
-    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
+    api_key = "hjeyxal7w86ltv3dx6m8bqfipldkpf"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
@@ -222,7 +222,7 @@ def barcode_title(input):
     return name
 
 def barcode_brand(input):
-    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
+    api_key = "hjeyxal7w86ltv3dx6m8bqfipldkpf"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
