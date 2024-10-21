@@ -21,7 +21,6 @@ searchedItem = ''
 foundItem = ''
 score = ''
 reasoning = ''
-category = ''
 
 
 
@@ -73,7 +72,7 @@ layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column
 layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')],
           [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
           [sg.Text("Reasoning: ")], 
-          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (100,5), wrap_lines=True)],
+          [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (300,15), wrap_lines=True)],
           [sg.VPush()],
           [sg.Button("Home", border_width=5)]]
 
@@ -103,14 +102,14 @@ layoutRecorded = [[sg.Text("Your response has been recorded. Thank you for makin
 
 
 # creates the windows for home, barcode scan, search database, etc.
-windowHome = sg.Window('Sustainable product app', layoutHome,  size=(500, 250), finalize=True)
+windowHome = sg.Window('Sustainable product app', layoutHome,  size=(1000, 500), finalize=True)
 windowScan = sg.Window('Scanning object', layoutScan, element_justification='center', finalize=True)
 windowSearch = sg.Window('Search database', layoutSearch, finalize=True)
 
-windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(600,300), finalize=True)
-windowProduct = sg.Window('Product info', layoutProduct, size = (500, 250), finalize=True)
+windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(1200,600), finalize=True)
+windowProduct = sg.Window('Product info', layoutProduct, size = (1000, 500), finalize=True)
 
-windowTry = sg.Window('Oops', layoutTryAgain, size = (500, 250), element_justification= 'center',finalize=True)
+windowTry = sg.Window('Oops', layoutTryAgain, size = (1000, 500), element_justification= 'center',finalize=True)
 windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
 windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True)
 
@@ -224,17 +223,6 @@ def barcode_title(input):
     return name
 
 
-def barcode_category(input):
-    api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
-    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
-
-    with urllib.request.urlopen(url) as url:
-        data = json.loads(url.read().decode())
-        
-    cat = data["category"][0]["title"]
-    return cat
-
-
 def barcode_brand(input):
     api_key = "9p5lsa1okti3p36vrfyxsqqin2nx51"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
@@ -334,19 +322,21 @@ while stay:
       break
     
     if event1 == "Scan Product":
+      print("good")
       num = scan()
       foundItem = barcode_title(num)
+      print(str(check_database(foundItem)))
       if str(check_database(foundItem)) == "None":
         link = barcode_brand(num)
         if not link == "None":
             score = get_rating(link)
             reasoning = get_reason(link)
-            category = barcode_category(num)
         else:
             windowActive = 5
             windowConfirm["-OUTPUT-"].update('Item Not Found')
 
       else:
+            print("e")
             score = getRatingOfSpecific(foundItem)
             reasoning = str(getPraiseOf(foundItem)) + " " + str(getCriticismOf(foundItem))
       windowActive = 3
@@ -386,7 +376,7 @@ while stay:
       try:
         foundItem = getData(searchedItem)
         score = getRatingOfSpecific(searchedItem)
-        reasoning = "Praise: \n" + str(getPraiseOf(searchedItem)) + "\n\nCriticism: " + str(getCriticismOf(searchedItem))
+        reasoning = "Praise: \n" + str(getPraiseOf(searchedItem)) + "\n\nCriticism: \n" + str(getCriticismOf(searchedItem))
         windowActive = 3
         windowConfirm["-OUTPUT-"].update(foundItem)
       except:
