@@ -119,28 +119,28 @@ def move_center(window):
 
 
 # creates the windows for home, barcode scan, search database, etc.
-windowHome = sg.Window('Sustainable product app', layoutHome, finalize=True)
-windowScan = sg.Window('Scanning object', layoutScan, finalize=True, location = (5000,5000))
+windowHome = sg.Window('Sustainable product app', layoutHome, size=(500,250), finalize=True)
+windowScan = sg.Window('Scanning object', layoutScan, element_justification='center', finalize=True, location = (5000,5000))
 windowScan.hide()
 move_center(windowScan)
 windowSearch = sg.Window('Search database', layoutSearch,finalize=True,location=(5000,5000))
 windowSearch.hide()
 move_center(windowSearch)
 
-windowConfirm = sg.Window('Confirm your product', layoutConfirm,finalize=True, location=(5000,5000))
+windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(600,300), finalize=True, location=(5000,5000))
 windowConfirm.hide()
 move_center(windowConfirm)
-windowProduct = sg.Window('Product info', layoutProduct, finalize=True,location = (5000,5000))
+windowProduct = sg.Window('Product info', layoutProduct, size=(500,250), finalize=True, location = (5000,5000))
 windowProduct.hide()
 move_center(windowProduct)
 
-windowTry = sg.Window('Oops', layoutTryAgain, finalize=True,location = (5000,5000))
+windowTry = sg.Window('Oops', layoutTryAgain, size=(500,250), element_justification = 'center', finalize=True, location = (5000,5000))
 windowTry.hide()
 move_center(windowTry)
-windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True,location = (5000,5000))
+windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True, location = (5000,5000))
 windowSubmit.hide()
 move_center(windowSubmit)
-windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True,location = (5000,5000))
+windowThanks = sg.Window('Thank you', layoutRecorded, finalize=True, location = (5000,5000))
 windowThanks.hide()
 move_center(windowThanks)
 
