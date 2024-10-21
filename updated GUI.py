@@ -374,6 +374,8 @@ while stay:
       if str(check_database(foundBrand)) == "None":
         score = "?"
         reasoning = foundBrand + " not found in rating database. Please add this product to the database!"
+        windowActive = 5
+        break
 
       else:
             score = getRatingOfSpecific(foundBrand)
