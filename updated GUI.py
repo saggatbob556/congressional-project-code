@@ -200,11 +200,15 @@ while stay:
       # also update the variables at the top (add more as needed)
 
       # PLACEHOLDER CODE FOR TESTING
-      foundItem = getData(searchedItem)
-      score = getRatingOfSpecific(searchedItem)
-      reasoning = str(getPraiseOf(searchedItem)) + " " + str(getCriticismOf(searchedItem))
-      windowActive = 3
-      windowConfirm["-OUTPUT-"].update(foundItem)
+      try:
+        foundItem = getData(searchedItem)
+        score = getRatingOfSpecific(searchedItem)
+        reasoning = str(getPraiseOf(searchedItem)) + " " + str(getCriticismOf(searchedItem))
+        windowActive = 3
+        windowConfirm["-OUTPUT-"].update(foundItem)
+      except:
+        windowActive = 5
+        windowConfirm["-OUTPUT-"].update('Item Not Found')
       break
   
 
