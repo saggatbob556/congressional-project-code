@@ -10,6 +10,8 @@ from collections import deque
 from dbr import *
 import urllib.request
 import json
+import base64
+from PIL import Image
 sg.theme('Dark Amber')
 
 # contains the String of the searched product
@@ -43,6 +45,13 @@ cameraIcon_base64 = b'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs
 searchIcon_base64 = b'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'
 exitIcon_base64 = b'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c6QAAAvFJREFUeF7tnEFSg0AQRSHH0fu4z8ozucre+8TjxNRUalKoJMww3f1/W99tYLr7PT5QYDJP+oMSmKHVVXySAPBBIAESACYALq8ESACYALi8EiABYALg8kqABIAJgMsrARIAJgAurwRIAJgAuLwSIAFgAuDySoAEgAmAy4ck4Hh8fzmdPr7As3aVj+rZXUAZ5HI4fB4ul7csEiJ7dhVQB5mm79dpms8ZJET37Cbg5yA1/dwSED27CFgfhFsCqmdzAc8H4ZSA7NlUQNsgXBLQPZsKKGjRA/XcazL0ai4giwQG+IWViwB2CSzwXQWwSmCC7y6ATQIb/BABLBIY4YcJQEtghR8qACWBGX64gGgJ7PAhAqIkZIAPE+AtIQt8qAAvCZngwwVYS8gGn0KAlYSM8GkEjErICp9KwF4JZb/y0v/23nnrj++VqNvT0C0Ujz7vPZpv6+SET5eAKqVPQotqviO/dk2XAHsJvPBpE2AngRs+vYD+C/PydMQPP4WAfRJywJeAluu38za0F+Hx60COFFALGL8d5ZdAK2Ac/v1Om/q/sikF2MHnl0AnoA/+fNajCMO7hF745QsfehhnJGAP/PqVp5F9jdrfvQzFKcgCoMUauykO7AgXYAnOcq0Bpl27QgV4APNYs4to58YwAZ6gPNfu5Lu5OURABKCIGpt0GzYIFxAJJrJWA+vVTUIFIIAgavbICBOABIGsvSUjRAADAIYe1mS4C2AanKmX+2PCrYiMfM44MFtPbglgG3R5IDH15iKAacBHCWbp0VwAy2Atp06GXk0FMAzUAp7pdGQqoAzWJoHrZTmyZ3MB2xK44Nc0PJfg17OLgMcS/AbpPfWsbb8uwbdnNwF/JfgOYiEA0bOrgOVAGX4x8ffpKKJndwFVQpbfDF1KiOg5RIDV6eE/riMBYKsSIAFgAuDySoAEgAmAyysBEgAmAC6vBEgAmAC4vBIgAWAC4PJKgASACYDLKwESACYALq8ESACYALi8EgAWcAWtkeyOXk4U5wAAAABJRU5ErkJggg=='
 
+def getLogo(brand):
+  tempLink = 'https://img.logo.dev/' + str(brand) + '.com?token=pk_eG-E-09aSFu5XX1-z-fa_w'
+  with open('logo.png', 'wb') as fh:
+      fh.write(base64.decodebytes(base64.b64encode(requests.get(tempLink).content).decode("Windows-1252")))
+#logo = Image.open('/logo.png')
+#logo.save('/logo.png')
+#need someone to fix this, it would be helpful to have an image of the company logo but i don't know how to save it
 layoutHome = [[sg.Text("Is your product sustainable?", p = (100, 10), font = (15))],
               [sg.Button("", key = "Scan barcode", image_data = cameraIcon_base64, p = 26, border_width = 5), 
                sg.Button("", key = "Search our database", image_data = searchIcon_base64, p = 26, border_width = 5), 
@@ -59,7 +68,8 @@ layoutSearch = [[sg.Text("Type your product here: "),sg.Input(key = '-INPUT-'),s
 
 # is-this-your-product layout
 confirmColumnLayout1 = [[sg.Text("Is this your product?", font = (15))],
-                 [sg.Text(key = '-OUTPUT-')]] #large empty space reserved for product name and/or picture
+                 [sg.Text(key = '-OUTPUT-')],
+                 [sg.Text(key = '-OUTPUT8-')]] #large empty space reserved for product name and/or picture
 
 confirmColumnLayout2 = [[sg.Button("Yes", size = (10,2), p = 20, border_width = 5)],
                  [sg.Button("No", size = (10,2), p = 20, border_width = 5)],
@@ -73,6 +83,8 @@ layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')],
           [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
           [sg.Text("Reasoning: ")], 
           [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (300,15), wrap_lines=True)],
+          [sg.Text("Alternative products:\n")],
+          [sg.Multiline(key='-OUTPUT8-', disabled = True, size = (250, 10), wrap_lines=False)],
           [sg.VPush()],
           [sg.Button("Home", border_width=5)]]
 
@@ -137,7 +149,6 @@ def closeAll():
   windowTry.close()
   windowSubmit.close()
   windowThanks.close()
-
 
 BarcodeReader.init_license("t0068lQAAAB1KwEW4syDLgyEan/ox1jzsKdrqymM+A97BgI1GKI1Qop/zgCpJH0778dkamsYYAGLZYZyCKQt9GokvNgnn1n0=;t0068lQAAAEwXD9bJmA7y1PU8CB3TUosceg1MJpVefKQTCIAMAHPBcMsI37bSEADLdaFe9zfyFNoGfo+o1jLUbWbnC3LJDn4=")
 reader = BarcodeReader()
@@ -212,7 +223,7 @@ def process_frame(frame):
 
 
 def barcode_title(input):
-    api_key = "hjeyxal7w86ltv3dx6m8bqfipldkpf"
+    api_key = "z4hjnlrc507mf37bqnc4d7k645a1vl"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
@@ -222,7 +233,7 @@ def barcode_title(input):
     return name
 
 def barcode_brand(input):
-    api_key = "hjeyxal7w86ltv3dx6m8bqfipldkpf"
+    api_key = "z4hjnlrc507mf37bqnc4d7k645a1vl"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
@@ -327,18 +338,13 @@ while stay:
       foundBrand = barcode_brand(num)
       print(str(check_database(foundBrand)))
       if str(check_database(foundBrand)) == "None":
-        link = barcode_brand(num)
-        if not link == "None":
-            score = get_rating(link)
-            reasoning = get_reason(link)
-        else:
-            windowActive = 5
-            windowConfirm["-OUTPUT-"].update('Item Not Found')
+        score = "?"
+        reasoning = foundBrand + " not found in rating database. Please add this product to the database!"
 
       else:
-            print("e")
             score = getRatingOfSpecific(foundBrand)
             reasoning = "Praise: \n" + str(getPraiseOf(foundBrand)) + "\n\nCriticism: \n" + str(getCriticismOf(foundBrand))
+            windowConfirm["-OUTPUT8-"].update(getAlternative(foundBrand))
       windowActive = 3
       windowConfirm["-OUTPUT-"].update(barcode_title(num))
       break
@@ -377,8 +383,11 @@ while stay:
         foundItem = getData(searchedItem)
         score = getRatingOfSpecific(searchedItem)
         reasoning = "Praise: \n" + str(getPraiseOf(searchedItem)) + "\n\nCriticism: \n" + str(getCriticismOf(searchedItem))
+        otherMatches = getLine(searchedItem)
         windowActive = 3
         windowConfirm["-OUTPUT-"].update(foundItem)
+        if not (str(otherMatches).count(searchedItem) <= 1):
+          windowConfirm["-OUTPUT8-"].update("\n\nOther possible matches include:\n" + str(otherMatches))
       except:
         windowActive = 5
         windowConfirm["-OUTPUT-"].update('Item Not Found')
@@ -404,6 +413,7 @@ while stay:
       windowProduct["-OUTPUT1-"].update(foundItem)
       windowProduct["-OUTPUT2-"].update(score)
       windowProduct["-OUTPUT3-"].update(reasoning)
+      windowProduct["-OUTPUT8-"].update(getAlternative(searchedItem))
       break
 
     if event3 == "No":
