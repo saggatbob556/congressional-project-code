@@ -223,7 +223,7 @@ def process_frame(frame):
 
 
 def barcode_title(input):
-    api_key = "z4hjnlrc507mf37bqnc4d7k645a1vl"
+    api_key = "ifli7f9rky1s38lhaqn0yd4nq31osu"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
@@ -232,13 +232,27 @@ def barcode_title(input):
     name = data["products"][0]["title"]
     return name
 
+def barcode_category(input):
+    api_key = "ifli7f9rky1s38lhaqn0yd4nq31osu"
+    url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
+    print("aodijw" + input)
+    with urllib.request.urlopen(url) as url:
+        data = json.loads(url.read().decode())
+    categories = str(data["products"][0]['category']).split(" > ")
+    for i in range(len(categories)):
+       if not getNumOfCategoryName(categories[len(categories)-i-1]) == getLastCategoryNum() + 1:
+          return getNumOfCategoryName(categories[len(categories)-i-1])
+    return getLastCategoryNum()
+
+
 def barcode_brand(input):
-    api_key = "z4hjnlrc507mf37bqnc4d7k645a1vl"
+    api_key = "ifli7f9rky1s38lhaqn0yd4nq31osu"
     url = "https://api.barcodelookup.com/v3/products?barcode=" + input + "&formatted=y&key=" + api_key
 
     with urllib.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
     brand = data["products"][0]["brand"]
+    print(str(data["products"][0]['category']).split(" > "))
 
     manufacturer = data["products"][0]["manufacturer"]
 
@@ -337,6 +351,7 @@ while stay:
       foundItem = barcode_title(num)
       foundBrand = barcode_brand(num)
       print(str(check_database(foundBrand)))
+      print(str(check_database(foundBrand)) == "None")
       if str(check_database(foundBrand)) == "None":
         score = "?"
         reasoning = foundBrand + " not found in rating database. Please add this product to the database!"
@@ -344,7 +359,8 @@ while stay:
       else:
             score = getRatingOfSpecific(foundBrand)
             reasoning = "Praise: \n" + str(getPraiseOf(foundBrand)) + "\n\nCriticism: \n" + str(getCriticismOf(foundBrand))
-            windowConfirm["-OUTPUT8-"].update(getAlternative(foundBrand))
+            print("cat: " + str(barcode_category(num)))
+            windowConfirm["-OUTPUT8-"].update("Other possible matches include:\n" + str(getAlternativeCategory(barcode_category(num))))
       windowActive = 3
       windowConfirm["-OUTPUT-"].update(barcode_title(num))
       break
@@ -413,7 +429,7 @@ while stay:
       windowProduct["-OUTPUT1-"].update(foundItem)
       windowProduct["-OUTPUT2-"].update(score)
       windowProduct["-OUTPUT3-"].update(reasoning)
-      windowProduct["-OUTPUT8-"].update(getAlternative(searchedItem))
+      windowProduct["-OUTPUT8-"].update(getAlternativeBrand(searchedItem))
       break
 
     if event3 == "No":
