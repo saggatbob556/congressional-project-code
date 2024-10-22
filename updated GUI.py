@@ -62,7 +62,7 @@ layoutHome = [[sg.Text("Is your product sustainable?", p = (100, 10), font = (15
                [sg.Text("Scan barcode", p = (35, 5)), sg.Text("Search our database", p = (30, 5)), sg.Text("Exit", p = (50, 5))]]
 
 # barcode scan layout
-layoutScan = [[sg.Text("Please hold your barcode up to the camera")],
+layoutScan = [[sg.Text("Please hold your barcode up to the camera")], [sg.Text("If you want to stop the webcam press the ESC key")],
               [sg.Button("Home", border_width=5), sg.Button("Search our database", border_width=5), sg.Button("Scan Product", border_width=5)]]
 
 # database search layout
