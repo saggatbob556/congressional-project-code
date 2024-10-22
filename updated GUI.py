@@ -14,6 +14,8 @@ import base64
 from io import BytesIO
 from PIL import Image
 import time
+from collections import deque
+from multiprocessing.pool import Pool
 sg.theme('Dark Amber')
 
 # contains the String of the searched product
@@ -80,14 +82,13 @@ layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Image(
 
 # product information layout
 # ADD MORE INFO AS NEEDED
-layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-')],
+layoutProduct = [[sg.Text("Your product: "), sg.Text(key='-OUTPUT1-'), [sg.Button("Home", border_width=5)]],
           [sg.Text("Score: "), sg.Text(key='-OUTPUT2-')],
           [sg.Text("Reasoning: ")], 
           [sg.Multiline(key='-OUTPUT3-', disabled = True, size = (300,15), wrap_lines=True)],
           [sg.Text("Alternative products:\n")],
           [sg.Multiline(key='-OUTPUT8-', disabled = True, size = (250, 10), wrap_lines=False)],
-          [sg.VPush()],
-          [sg.Button("Home", border_width=5)]]
+          [sg.VPush()]]
 
 # layout for if the scan and database aren't working
 sadFace_base64 = b'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'
@@ -131,7 +132,7 @@ move_center(windowSearch)
 windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(600,300), finalize=True, location=(5000,5000))
 windowConfirm.hide()
 move_center(windowConfirm)
-windowProduct = sg.Window('Product info', layoutProduct, size=(500,250), finalize=True, location = (5000,5000))
+windowProduct = sg.Window('Product info', layoutProduct, size=(500,450), finalize=True, location = (5000,5000))
 windowProduct.hide()
 move_center(windowProduct)
 
@@ -292,7 +293,8 @@ def check_database(input):
 
 
 def scan():
-    vc = cv.VideoCapture(0)
+    vc = cv.VideoCapture(0, cv.CAP_DSHOW)
+    print("capture")
     while True:
         ret, frame = vc.read()
         while len(barcodeTasks) > 0 and barcodeTasks[0].ready():
