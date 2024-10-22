@@ -122,7 +122,7 @@ windowScan = sg.Window('Scanning object', layoutScan, element_justification='cen
 windowSearch = sg.Window('Search database', layoutSearch, finalize=True)
 
 windowConfirm = sg.Window('Confirm your product', layoutConfirm, size=(1200,600), finalize=True)
-windowProduct = sg.Window('Product info', layoutProduct, size=(500,450), finalize=True, location = (5000,5000))
+windowProduct = sg.Window('Product info', layoutProduct, size=(1300,800), finalize=True)
 
 windowTry = sg.Window('Oops', layoutTryAgain, size = (1000, 500), element_justification= 'center',finalize=True)
 windowSubmit = sg.Window('Submit a product for review', layoutReview, finalize=True)
@@ -362,6 +362,7 @@ while stay:
 
       else:
             cat = barcode_category(num)
+            print(str(foundBrand) + " DJo" + str(cat) + "adjoiw: " + str(getNameOfCategoryNum(cat)))
             foundIndex = searchBrandWithinCategory(foundBrand, getNameOfCategoryNum(cat))
             if foundIndex.empty:
                foundIndex = -1
