@@ -11,7 +11,9 @@ from dbr import *
 import urllib.request
 import json
 import base64
+from io import BytesIO
 from PIL import Image
+import time
 sg.theme('Dark Amber')
 
 # contains the String of the searched product
