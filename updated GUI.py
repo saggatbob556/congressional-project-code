@@ -48,10 +48,9 @@ exitIcon_base64 = b'iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAAAXNSR0IArs4c
 def getLogo(brand):
   tempLink = 'https://img.logo.dev/' + str(brand) + '.com?token=pk_eG-E-09aSFu5XX1-z-fa_w'
   with open('logo.png', 'wb') as fh:
-      fh.write(base64.decodebytes(base64.b64encode(requests.get(tempLink).content).decode("Windows-1252")))
-#logo = Image.open('logo.png')
-#logo.save('logo.png')
-#need someone to fix this, it would be helpful to have an image of the company logo but i don't know how to save it
+     fh.write(base64.decodebytes(base64.b64encode(requests.get(tempLink).content)))
+
+
 layoutHome = [[sg.Text("Is your product sustainable?", p = (100, 10), font = (15))],
               [sg.Button("", key = "Scan barcode", image_data = cameraIcon_base64, p = 26, border_width = 5), 
                sg.Button("", key = "Search our database", image_data = searchIcon_base64, p = 26, border_width = 5), 
@@ -75,7 +74,7 @@ confirmColumnLayout2 = [[sg.Button("Yes", size = (10,2), p = 20, border_width = 
                  [sg.Button("No", size = (10,2), p = 20, border_width = 5)],
                  [sg.Button("Home", size = (10,2), p = 20, border_width = 5)]]
 
-layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column(confirmColumnLayout2, element_justification = "right")]]
+layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column(confirmColumnLayout2, element_justification = "right")], [sg.Image(filename='', key='-IMAGE-')]]
 
 # product information layout
 # ADD MORE INFO AS NEEDED
@@ -435,6 +434,16 @@ while stay:
   while windowActive == 3:
     hideWindows()
     windowConfirm.un_hide()
+    getLogo(foundBrand)
+    with open('logo.png', 'rb') as fh:
+       base64_bytes = base64.b64encode(fh.read())
+       img = Image.open(BytesIO(base64.b64decode(base64_bytes)))
+       output_buffer = BytesIO()
+       img.save(output_buffer, format='PNG')
+       png_data = output_buffer.getvalue()
+
+    time.sleep(0.1)
+    windowConfirm['-IMAGE-'].update(png_data)
     event3, values3 = windowConfirm.read()
 
     if event3 == sg.WIN_CLOSED:
