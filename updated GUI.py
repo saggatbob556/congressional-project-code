@@ -440,14 +440,17 @@ while stay:
   while windowActive == 3:
     hideWindows()
     windowConfirm.un_hide()
-    getLogo(foundBrand)
-    with open('logo.png', 'rb') as fh:
-       base64_bytes = base64.b64encode(fh.read())
-       img = Image.open(BytesIO(base64.b64decode(base64_bytes)))
-       output_buffer = BytesIO()
-       img.save(output_buffer, format='PNG')
-       png_data = output_buffer.getvalue()
-
+    
+    try:
+        getLogo(foundBrand)
+        with open('logo.png', 'rb') as fh:
+            base64_bytes = base64.b64encode(fh.read())
+            img = Image.open(BytesIO(base64.b64decode(base64_bytes)))
+            output_buffer = BytesIO()
+            img.save(output_buffer, format='PNG')
+            png_data = output_buffer.getvalue()
+    except:
+       png_data = ''
     time.sleep(0.1)
     windowConfirm['-IMAGE-'].update(png_data)
     event3, values3 = windowConfirm.read()
