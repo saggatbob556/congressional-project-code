@@ -316,7 +316,7 @@ def scan():
         ch = cv.waitKey(1)
         if ch == 27:
             cv.destroyAllWindows()
-            break
+            return "None"
 
 stay = True
 
@@ -368,24 +368,25 @@ while stay:
     if event1 == "Scan Product":
       print("good")
       num = scan()
-      foundItem = barcode_title(num)
-      foundBrand = barcode_brand(num)
-      print(str(check_database(foundBrand)))
-      print(str(check_database(foundBrand)) == "None")
-      if str(check_database(foundBrand)) == "None":
-        score = "?"
-        reasoning = foundBrand + " not found in rating database. Please add this product to the database!"
-        windowActive = 5
-        break
+      if not num == "None":
+        foundItem = barcode_title(num)
+        foundBrand = barcode_brand(num)
+        print(str(check_database(foundBrand)))
+        print(str(check_database(foundBrand)) == "None")
+        if str(check_database(foundBrand)) == "None":
+            score = "?"
+            reasoning = foundBrand + " not found in rating database. Please add this product to the database!"
+            windowActive = 5
+            break
 
-      else:
-            score = getRatingOfSpecific(foundBrand)
-            reasoning = "Praise: \n" + str(getPraiseOf(foundBrand)) + "\n\nCriticism: \n" + str(getCriticismOf(foundBrand))
-            print("cat: " + str(barcode_category(num)))
-            windowConfirm["-OUTPUT8-"].update("Other possible matches include:\n" + str(getAlternativeCategory(barcode_category(num))))
-      windowActive = 3
-      windowConfirm["-OUTPUT-"].update(barcode_title(num))
-      break
+        else:
+                score = getRatingOfSpecific(foundBrand)
+                reasoning = "Praise: \n" + str(getPraiseOf(foundBrand)) + "\n\nCriticism: \n" + str(getCriticismOf(foundBrand))
+                print("cat: " + str(barcode_category(num)))
+                windowConfirm["-OUTPUT8-"].update("Other possible matches include:\n" + str(getAlternativeCategory(barcode_category(num))))
+        windowActive = 3
+        windowConfirm["-OUTPUT-"].update(barcode_title(num))
+        break
     
       
   
