@@ -412,7 +412,7 @@ while stay:
     # if the user types something into the box and presses 'search'
     if event2 == "Search":
       searchedItem = values2['-INPUT-']
-      
+      foundBrand = searchedItem
       # in app, search through the database and return the product (should go into foundItem)
       # also update the variables at the top (add more as needed)
 
