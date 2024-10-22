@@ -76,7 +76,7 @@ confirmColumnLayout2 = [[sg.Button("Yes", size = (10,2), p = 20, border_width = 
                  [sg.Button("No", size = (10,2), p = 20, border_width = 5)],
                  [sg.Button("Home", size = (10,2), p = 20, border_width = 5)]]
 
-layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Column(confirmColumnLayout2, element_justification = "right")], [sg.Image(filename='', key='-IMAGE-')]]
+layoutConfirm = [[sg.vtop(sg.Column(confirmColumnLayout1)), sg.Push(), sg.Image(filename='', key='-IMAGE-'),sg.Column(confirmColumnLayout2, element_justification = "right")]]
 
 # product information layout
 # ADD MORE INFO AS NEEDED
@@ -413,6 +413,7 @@ while stay:
     if event2 == "Search":
       searchedItem = values2['-INPUT-']
       foundBrand = searchedItem
+      
       # in app, search through the database and return the product (should go into foundItem)
       # also update the variables at the top (add more as needed)
 
