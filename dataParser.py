@@ -29,25 +29,30 @@ def getBestOfCategory(category):
     if not df.query('Category == ' + str(category) + ' and Rating == \'?\'').empty:
         return df.query('Category == ' + str(category) + ' and Rating == \'?\'')
 def getData(brand):
+    print(brand)
     return "Brand: " + brand + "     Category: " + getCategoryNameOf(brand)
 #not exact, brand can be a substring of the entire brand name
 def getLine(brand):
     return df[df['Brand'].str.contains(brand)]
 #brand is the exact brand name, used when user chooses a specific brand when searching and multiple brands with the substring come up
-def getRatingOfSpecific(brand):
-    return df.at[df.query('Brand == \'' + str(brand) + '\'').index[0], 'Rating']
-def getPraiseOf(brand):
-    return df.at[df.query('Brand == \'' + str(brand) + '\'').index[0], 'Praises']
-def getCriticismOf(brand):
-    return df.at[df.query('Brand == \'' + str(brand) + '\'').index[0], 'Criticisms']
-def getCategoryOf(brand):
-    return df.at[df.query('Brand == \'' + str(brand) + '\'').index[0], 'Category']
-def getCategoryNameOf(brand):
-    return df.at[df.query('Brand == \'' + str(brand) + '\'').index[0], 'CategoryNames']
-def getAlternative(brand):
-    cat = df.at[getData(brand).index[0], 'Category']
-    return getBestOfCategory(cat)
+def getRatingOf(line):
+    return df.loc[line, 'Rating']
+def getPraiseOf(line):
+    return df.at[line, 'Praises']
+def getCriticismOf(line):
+    return df.at[line, 'Criticisms']
+def getCategoryOf(line):
+    return df.loc[line, 'Category']
+def getCategoryNameOf(line):
+    return df.loc[line, 'CategoryNames']
+def getAlternativeBrand(line):
+    print("aoidj: " + str(line))
+    return getBestOfCategory(getCategoryOf(line))
+def getAlternativeCategory(category):
+    return getBestOfCategory(category)
 def addNewProduct(brand, rating, category, criticism, praise, categoryName):
     with open('unsorted.csv', 'a') as df:
         df.write('\n' + brand + ',' + rating + ',' + str(category) + ',' + criticism + ',' + praise + ',' + categoryName)
         df = pd.read_csv('unsorted.csv')
+def searchBrandWithinCategory(brand, categoryName):
+    return df.query('Brand.str.contains(\'' + str(brand) + '\', case=False)' + ' and CategoryNames.str.contains(\'' + str(categoryName) + '\', case=False)')
